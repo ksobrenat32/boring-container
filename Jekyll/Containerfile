@@ -1,0 +1,9 @@
+FROM debian
+
+RUN apt-get update -y && apt-get install ruby-full build-essential -y
+RUN gem install jekyll bundler
+
+VOLUME ["/page"]
+WORKDIR /page
+
+CMD bundle install && bundle exec jekyll serve --livereload
