@@ -1,0 +1,16 @@
+FROM openjdk:19-slim-bullseye
+
+ENV XMX=1024M
+ENV XMS=1024M
+ENV SERVER_JAR=server.jar
+
+VOLUME ["/data"]
+WORKDIR /data
+
+COPY entrypoint.sh .
+
+EXPOSE 25565
+EXPOSE 19132/udp
+EXPOSE 19133/udp
+
+ENTRYPOINT [ "./entrypoint.sh" ]
