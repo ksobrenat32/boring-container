@@ -1,8 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -euo pipefail
 
+JAVA_PATH="/usr/bin/java"
+
 # Running command.
-CMD="/usr/bin/java -Xmx${XMX} -Xms${XMS} -jar /data/${SERVER_JAR} nogui"
+CMD="${JAVA_PATH} -Xmx${XMX} -Xms${XMS} -jar /data/${SERVER_JAR} nogui"
 
 if [ -z "$(ls -A /data)" ]; then
     echo 
@@ -11,7 +13,7 @@ if [ -z "$(ls -A /data)" ]; then
     echo
 
     # Make sure to install needed tools
-    apt-get install -y -qq jq gawk curl coreutils sed
+    apt-get install -y -qq jq gawk curl
 
     # Getting the latest minecraft and paper version
     LATEST_VERSION=$(curl -fsSL "https://launchermeta.mojang.com/mc/game/version_manifest.json" -H  "accept: application/json" | awk '{print $3}' | sed 's/\"//g' | sed 's/\,//g')
@@ -20,16 +22,12 @@ if [ -z "$(ls -A /data)" ]; then
 
     # Downloading files
     curl -fsSL ${PAPER_URL} -o /data/server.jar
-    curl -fsSL https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/target/Geyser-Spigot.jar -O /data/plugins/Geyser-Spigot.jar
-    curl -fsSL https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/target/floodgate-spigot.jar -O /data/plugins/floodgate-spigot.jar
+    mkdir -p /data/plugins
+    curl -fsSL "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/target/Geyser-Spigot.jar" -o /data/plugins/Geyser-Spigot.jar
+    curl -fsSL "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/target/floodgate-spigot.jar" -o /data/plugins/floodgate-spigot.jar
 
-    # Generate configurations
+    # Accept EULA
     echo "eula=true" >> /data/eula.txt
-    timeout 1m /usr/bin/java -jar /data/${SERVER_JAR} nogui
-    sed -i -e "s/  server-name: \"Geyser\"/  server-name: \"Minecraft Server\"/" /data/plugins/Geyser-Spigot/config.yml
-    sed -i -e "s/  motd1: \"Geyser\"/  motd1: \"Minecraft Server\"/" /data/plugins/Geyser-Spigot/config.yml
-    sed -i -e "s/  motd2: \"Another Geyser server.\"/  motd2: \"Minecraft Server\"/" /data/plugins/Geyser-Spigot/config.yml
-    sed -i -e "s/  auth-type: online/  auth-type: floodgate/" /data/plugins/Geyser-Spigot/config.yml
 
     # Try running
     echo 
