@@ -19,7 +19,7 @@ podman run -d \
     --name simple-mc \
     -p 25565:25565 \
     -p 19132:19132/udp \
-    -p 19133:19132/udp \
+    -p 19133:19133/udp \
     -e XMX=1024M `# Change to maximum ram for java` \
     -e XMS=1024M `# Change to mimimum ram for java` \
     -e SERVER_JAR=server.jar `# The name of the server executable` \
