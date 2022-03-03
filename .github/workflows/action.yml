@@ -1,0 +1,27 @@
+name: Build Container Images
+
+on:
+  push:
+
+
+jobs:
+  build_containers:
+    name: Build all the containers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v1
+
+      - name: Build and publish image simple-mc
+        uses: macbre/push-to-ghcr@master
+        with:
+          image_name: ${{ github.actor }}/simple-mc
+          github_token: ${{ secrets.PAT }}
+          dockerfile: ./minecraft/Containerfile
+
+      - name: Build and publish image jekyll
+        uses: macbre/push-to-ghcr@master
+        with:
+          image_name: ${{ github.actor }}/jekyll
+          github_token: ${{ secrets.PAT }}
+          dockerfile: ./jekyll/Containerfile

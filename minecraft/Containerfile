@@ -20,10 +20,10 @@ WORKDIR /data
 
 # Copy Geyser config
 RUN mkdir -p /data/plugins/Geyser-Spigot
-COPY GeyserConfig.yml /data/plugins/Geyser-Spigot/config.yml
+COPY ./minecraft/GeyserConfig.yml /data/plugins/Geyser-Spigot/config.yml
 
 # Entrypoint
-COPY entrypoint.sh /entrypoint.sh
+COPY ./minecraft/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
