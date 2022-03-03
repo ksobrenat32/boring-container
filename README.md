@@ -5,17 +5,13 @@ Some simple, but useful containerfiles and guides,
  so remember to read the containerfiles and
  modify it to suit your needs
 
-## Simple java container prepared to run a minecraft server
-
-### Building your own image
-
-In order to build this image you should run
+## Building your own image
 
 ```sh
-podman build -t simple-mc ./minecraft/.
+podman build -t image-name ./project/.
 ```
 
-### Usage
+## Simple java container prepared to run a minecraft server
 
 To run this container use:
 
@@ -32,3 +28,14 @@ podman run -d \
     ghcr.io/ksobrenat32/simple-mc
 ```
 
+## Simple Jekyll container for testing without installing full Jekyll
+
+To run this container use:
+
+```sh
+podman run -d \
+    --name Jekyll \
+    --net=host \
+    -v /path/to/page:/page:z \
+    ghcr.io/ksobrenat32/jekyll
+```
