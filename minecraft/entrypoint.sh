@@ -13,7 +13,7 @@ if [ -z "$(ls -A /data)" ]; then
     echo
 
     # Make sure to install needed tools
-    apt-get install -y -qq jq gawk curl
+    apt-get install -y -qq jq gawk
 
     # Getting the latest minecraft and paper version
     LATEST_VERSION=$(curl -fsSL "https://launchermeta.mojang.com/mc/game/version_manifest.json" -H  "accept: application/json" | awk '{print $3}' | sed 's/\"//g' | sed 's/\,//g')

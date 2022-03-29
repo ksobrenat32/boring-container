@@ -5,9 +5,9 @@ ENV XMX=1024M
 ENV XMS=1024M
 ENV SERVER_JAR=server.jar
 
-# Install java
+# Install java and curl
 RUN apt-get update -y -qq
-RUN apt-get install -y -qq openjdk-17-jre
+RUN apt-get install -y -qq openjdk-17-jre and curl
 
 # Export ports
 EXPOSE 25565
@@ -17,6 +17,14 @@ EXPOSE 19133/udp
 # Working dir
 VOLUME ["/data"]
 WORKDIR /data
+
+# Download rcon
+RUN mkdir -p /tmp/mcrcon && \
+    curl -fsSL -o /tmp/mcrcon/mcrcon.tar.gz $(curl -s https://api.github.com/repos/Tiiffi/mcrcon/releases/latest | grep "browser_download_url.*64.tar.gz" | cut -d : -f 2,3 | tr -d \") && \
+    tar -xf /tmp/mcrcon/mcrcon.tar.gz --directory=/tmp/mcrcon && \
+    mv /tmp/mcrcon/mcrcon /usr/local/bin/ && \
+    ln -s /usr/local/bin/mcrcon /mcrcon && \
+    rm -rf /tmp/mcrcon
 
 # Copy Geyser config
 RUN mkdir -p /data/plugins/Geyser-Spigot

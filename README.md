@@ -28,6 +28,10 @@ podman run -d \
     ghcr.io/ksobrenat32/simple-mc
 ```
 
+```sh
+podman exec -it simple-mc mcrcon -H 127.0.0.1 -P <port> -p <password> -t
+```
+
 ## Simple Jekyll container for testing without installing full Jekyll
 
 To run this container use:
