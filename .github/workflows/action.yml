@@ -2,7 +2,9 @@ name: Build Container Images
 
 on:
   push:
-
+    paths:
+      - 'minecraft/**'
+      - 'jekyll/**'
 
 jobs:
   build_containers:
@@ -16,12 +18,12 @@ jobs:
         uses: macbre/push-to-ghcr@master
         with:
           image_name: ${{ github.actor }}/simple-mc
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: ./minecraft/Containerfile
 
       - name: Build and publish image jekyll
         uses: macbre/push-to-ghcr@master
         with:
           image_name: ${{ github.actor }}/jekyll
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: ./jekyll/Containerfile
