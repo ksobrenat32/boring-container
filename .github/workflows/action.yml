@@ -2,9 +2,6 @@ name: Build Container Images
 
 on:
   push:
-    paths:
-      - 'minecraft/**'
-      - 'jekyll/**'
 
 jobs:
   build_containers:

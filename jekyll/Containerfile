@@ -1,9 +1,16 @@
-FROM debian
+FROM debian:11-slim
 
-RUN apt-get update -y && apt-get install ruby-full build-essential -y
-RUN gem install jekyll bundler
+LABEL org.opencontainers.image.authors="https://github.com/ksobrenat32" \
+    description="A container image that contains full Jekyll static site generator"
+
+RUN apt-get update -y && \
+    apt-get install ruby-full build-essential -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    gem install jekyll bundler
 
 VOLUME ["/page"]
 WORKDIR /page
+
+EXPOSE 4000
 
 CMD bundle install && bundle exec jekyll serve --livereload

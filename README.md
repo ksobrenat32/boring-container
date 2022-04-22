@@ -1,11 +1,10 @@
 # simple-container
 
-Some simple, but useful containerfiles and guides,
- they may not be the most secure configurations
- so remember to read the containerfiles and
+Simple but useful containerfiles and guides,
+ remember to read the containerfiles and
  modify it to suit your needs
 
-## Building your own image
+## Building a local image
 
 ```sh
 podman build -t image-name ./project/.
@@ -32,14 +31,16 @@ podman run -d \
 podman exec -it simple-mc mcrcon -H 127.0.0.1 -P <port> -p <password> -t
 ```
 
-## Simple Jekyll container for testing without installing full Jekyll
+## Jekyll container
 
-To run this container use:
+A container image to run the full Jekyll program on a debian
+ system without having to install it on bare metal. To run
+ this container use:
 
 ```sh
 podman run -d \
     --name Jekyll \
-    --net=host \
+    -p 4000:4000 \
     -v /path/to/page:/page:z \
-    ghcr.io/ksobrenat32/jekyll
+    ghcr.io/ksobrenat32/jekyll:latest
 ```
