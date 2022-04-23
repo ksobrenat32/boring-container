@@ -9,9 +9,7 @@ RUN curl -fsSL -o /tmp/blocky.tgz $(curl -s https://api.github.com/repos/0xERR0R
     tar -xf /tmp/blocky.tgz --directory=/tmp && \
     mv /tmp/blocky /output/usr/bin/blocky
 
-RUN rm /output/var/lib/unbound/root.key && \
-    mv /output/etc/unbound /output/etc/unbound.old && \
-    mkdir -p /output/dns/{blocky,unbound} && \
+RUN rm -rf /output/var/lib/unbound/root.key /output/etc/unbound && \
     ln -s /dns/unbound /output/etc/unbound
 
 FROM scratch
@@ -24,8 +22,9 @@ COPY --from=build-env /output /
 EXPOSE 53/tcp
 EXPOSE 53/udp
 VOLUME ["/dns"]
+WORKDIR /dns
 
-COPY ./dns/unbound.conf /dns/unbound/unbound.conf
+COPY ./dns/unbound.conf /opt/unbound.conf
 
 COPY ./dns/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

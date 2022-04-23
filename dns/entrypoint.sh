@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo 'Downloading root hints ...'
+if [[ -z "$(ls -A /dns)" ]]; then
+    echo 'Generating config'
+    mkdir -p /dns/{blocky,unbound}
+    mv /opt/unbound.conf /dns/unbound/unbound.conf
+fi
+
+echo 'Downloading updated root hints ...'
 curl -fsSL -o /dns/unbound/root.hints https://www.internic.net/domain/named.cache
 echo 'Generating a trust-anchor ...'
 /usr/sbin/unbound-anchor &

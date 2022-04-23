@@ -13,7 +13,7 @@ podman build -t image-name ./project/.
 ## Ultimate DNS
 
 A container that contains unbound as recursive dns with
- [blocky](https://0xerr0r.github.io/blocky/) ad an ad blocking
+ [blocky](https://0xerr0r.github.io/blocky/) as an ad blocking
  dns proxy. It is based on a minimal fedora install for
  ease and security.
 
