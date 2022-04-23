@@ -11,6 +11,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v1
 
+      - name: Build and publish image udns
+        uses: macbre/push-to-ghcr@master
+        with:
+          image_name: ${{ github.actor }}/udns
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dockerfile: ./dns/Containerfile
+
       - name: Build and publish image simple-mc
         uses: macbre/push-to-ghcr@master
         with:

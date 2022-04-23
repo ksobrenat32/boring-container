@@ -1,0 +1,33 @@
+FROM registry.fedoraproject.org/fedora:36 as build-env
+
+RUN dnf -y --setopt=install_weak_deps=false --nodocs \
+        --installroot /output --releasever 36 \
+        install glibc-minimal-langpack coreutils-single glibc bash unbound curl && \
+    dnf -y --installroot /output --releasever 36 clean all
+
+RUN curl -fsSL -o /tmp/blocky.tgz $(curl -s https://api.github.com/repos/0xERR0R/blocky/releases/latest | grep "browser_download_url.*_Linux_x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \") && \
+    tar -xf /tmp/blocky.tgz --directory=/tmp && \
+    mv /tmp/blocky /output/usr/bin/blocky
+
+RUN rm /output/var/lib/unbound/root.key && \
+    mv /output/etc/unbound /output/etc/unbound.old && \
+    mkdir -p /output/dns/{blocky,unbound} && \
+    ln -s /dns/unbound /output/etc/unbound
+
+FROM scratch
+
+LABEL org.opencontainers.image.authors="https://github.com/ksobrenat32" \
+    description="A container image that has recursive dns with ad blocking"
+
+COPY --from=build-env /output /
+
+EXPOSE 53/tcp
+EXPOSE 53/udp
+VOLUME ["/dns"]
+
+COPY ./dns/unbound.conf /dns/unbound/unbound.conf
+
+COPY ./dns/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT [ "/entrypoint.sh" ]
