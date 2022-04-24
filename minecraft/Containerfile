@@ -1,43 +1,43 @@
-FROM debian:11-slim
+FROM registry.fedoraproject.org/fedora:36 as build-env
+
+RUN dnf -y --setopt=install_weak_deps=false --nodocs \
+        --installroot /output --releasever 36 \
+        install glibc coreutils-single bash curl jq java-17-openjdk-headless && \
+    dnf -y --installroot /output --releasever 36 clean all
+
+RUN mkdir -p /tmp/mcrcon && \
+    curl -fsSL -o /tmp/mcrcon/mcrcon.tar.gz $(curl -s https://api.github.com/repos/Tiiffi/mcrcon/releases/latest | grep "browser_download_url.*64.tar.gz" | cut -d : -f 2,3 | tr -d \") && \
+    tar -xf /tmp/mcrcon/mcrcon.tar.gz --directory=/tmp/mcrcon && \
+    mv /tmp/mcrcon/mcrcon /output/usr/local/bin/ && \
+    ln -s /usr/local/bin/mcrcon /output/mcrcon && \
+    rm -rf /tmp/mcrcon
+
+# Copy Geyser config in case it is needed
+RUN mkdir -p /opt/mc/Geyser
+COPY ./minecraft/GeyserConfig.yml /output/opt/mc/Geyser/config.yml
+
+# Entrypoint
+COPY ./minecraft/entrypoint.sh /output/entrypoint.sh
+RUN chmod +x /output/entrypoint.sh
+
+FROM scratch
 
 LABEL org.opencontainers.image.authors="https://github.com/ksobrenat32" \
     description="A container image that contains full openjdk-17, rcon, and script for starting a minecraft server"
 
-# Enviroment variables
+COPY --from=build-env /output /
+
 ENV XMX=1024M
 ENV XMS=1024M
 ENV SERVER_JAR=server.jar
 ENV SERVER_TYPE=VANILLA
 ENV SERVER_VERSION=LATEST
 
-# Export ports
 EXPOSE 25565
 EXPOSE 19132/udp
 EXPOSE 19133/udp
 
-# Working dir
 VOLUME ["/data"]
 WORKDIR /data
-
-# Install java and curl
-RUN apt-get update -y && \
-    apt-get install -y openjdk-17-jre curl jq && \
-    rm -rf /var/lib/apt/lists/*
-
-# Download rcon
-RUN mkdir -p /tmp/mcrcon && \
-    curl -fsSL -o /tmp/mcrcon/mcrcon.tar.gz $(curl -s https://api.github.com/repos/Tiiffi/mcrcon/releases/latest | grep "browser_download_url.*64.tar.gz" | cut -d : -f 2,3 | tr -d \") && \
-    tar -xf /tmp/mcrcon/mcrcon.tar.gz --directory=/tmp/mcrcon && \
-    mv /tmp/mcrcon/mcrcon /usr/local/bin/ && \
-    ln -s /usr/local/bin/mcrcon /mcrcon && \
-    rm -rf /tmp/mcrcon
-
-# Copy Geyser config in case it is needed
-RUN mkdir -p /opt/mc/Geyser
-COPY ./minecraft/GeyserConfig.yml /opt/mc/Geyser/config.yml
-
-# Entrypoint
-COPY ./minecraft/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]

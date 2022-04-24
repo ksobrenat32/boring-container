@@ -67,17 +67,3 @@ after configuring the rcon service with:
 ```sh
 podman exec -it containerName mcrcon -H 127.0.0.1 -P <port> -p <password> -t
 ```
-
-## Jekyll container
-
-A container image to run the full Jekyll program on a debian
- system without having to install it on bare metal. To run
- this container use:
-
-```sh
-podman run -d \
-    --name Jekyll \
-    -p 4000:4000 \
-    -v /path/to/page:/page:z \
-    ghcr.io/ksobrenat32/jekyll:latest
-```

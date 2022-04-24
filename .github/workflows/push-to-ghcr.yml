@@ -24,10 +24,3 @@ jobs:
           image_name: ${{ github.actor }}/simple-mc
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: ./minecraft/Containerfile
-
-      - name: Build and publish image jekyll
-        uses: macbre/push-to-ghcr@master
-        with:
-          image_name: ${{ github.actor }}/jekyll
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          dockerfile: ./jekyll/Containerfile
