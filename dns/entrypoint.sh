@@ -25,4 +25,4 @@ else
 fi
 
 echo 'Starting blocky, DNS ad blocker'
-/usr/bin/blocky --config /dns/blocky/config.yml
+/usr/bin/sudo -u blocky /usr/bin/blocky --config /dns/blocky/config.yml

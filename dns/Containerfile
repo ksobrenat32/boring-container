@@ -2,12 +2,13 @@ FROM registry.fedoraproject.org/fedora:36 as build-env
 
 RUN dnf -y --setopt=install_weak_deps=false --nodocs \
         --installroot /output --releasever 36 \
-        install glibc-minimal-langpack coreutils-single glibc bash unbound curl && \
+        install glibc-minimal-langpack coreutils-single glibc bash unbound curl shadow-utils sudo && \
     dnf -y --installroot /output --releasever 36 clean all
 
 RUN curl -fsSL -o /tmp/blocky.tgz $(curl -s https://api.github.com/repos/0xERR0R/blocky/releases/latest | grep "browser_download_url.*_Linux_x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \") && \
     tar -xf /tmp/blocky.tgz --directory=/tmp && \
-    mv /tmp/blocky /output/usr/bin/blocky
+    mv /tmp/blocky /output/usr/bin/blocky && \
+    setcap 'cap_net_bind_service=+ep' /output/usr/bin/blocky
 
 RUN rm -rf /output/var/lib/unbound/root.key /output/etc/unbound && \
     ln -s /dns/unbound /output/etc/unbound
@@ -23,6 +24,8 @@ EXPOSE 53/tcp
 EXPOSE 53/udp
 VOLUME ["/dns"]
 WORKDIR /dns
+
+RUN /usr/sbin/adduser --no-create-home --uid 530 --no-create-home blocky
 
 COPY ./dns/unbound.conf /opt/unbound.conf
 
