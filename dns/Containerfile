@@ -5,7 +5,8 @@ RUN dnf -y --setopt=install_weak_deps=false --nodocs \
         install glibc-minimal-langpack coreutils-single glibc bash unbound curl shadow-utils sudo && \
     dnf -y --installroot /output --releasever 36 clean all
 
-RUN curl -fsSL -o /tmp/blocky.tgz $(curl -s https://api.github.com/repos/0xERR0R/blocky/releases/latest | grep "browser_download_url.*_Linux_x86_64.tar.gz" | cut -d : -f 2,3 | tr -d \") && \
+RUN if [ $(arch) = "aarch64" ]; then arch=arm64; elif [ $(arch) = "x86_64" ]; then arch=x86_64 ; fi && \
+    curl -fsSL -o /tmp/blocky.tgz $(curl -s https://api.github.com/repos/0xERR0R/blocky/releases/latest | grep "browser_download_url.*_Linux_${arch}.tar.gz" | cut -d : -f 2,3 | tr -d \") && \
     tar -xf /tmp/blocky.tgz --directory=/tmp && \
     mv /tmp/blocky /output/usr/bin/blocky && \
     setcap 'cap_net_bind_service=+ep' /output/usr/bin/blocky
