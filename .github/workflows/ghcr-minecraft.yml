@@ -1,0 +1,30 @@
+name: Publish Container Image - simple-mc
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: simple-mc
+  CONTAINER_DIR: minecraft
+
+jobs:
+  pushGitHubReg:
+    name: Push to Github Registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build image
+        run: docker build . --file ./${CONTAINER_DIR}/Containerfile --tag image
+
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.actor }}/$IMAGE_NAME
+          VERSION=latest
+          docker tag image $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
