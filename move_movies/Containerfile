@@ -1,0 +1,24 @@
+FROM registry.fedoraproject.org/fedora:36 as build-env
+
+RUN dnf -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm && \
+    dnf -y --setopt=install_weak_deps=false --nodocs \
+        --installroot /output --releasever 36 \
+        install glibc coreutils-single prename ffmpeg inotify-tools && \
+    dnf -y --installroot /output --releasever 36 clean all && \
+    rm -rf /output/var/cache/dnf
+
+FROM scratch
+
+LABEL org.opencontainers.image.authors="https://github.com/ksobrenat32" \
+    description="A container image that moves movies and removes the title metadata"
+
+COPY --from=build-env /output /
+COPY ./move_movies/entrypoint.sh /entrypoint.sh
+COPY ./move_movies/manual.sh /manual.sh
+
+VOLUME ["/origin"]
+VOLUME ["/destiny"]
+
+WORKDIR /origin
+
+ENTRYPOINT [ "/entrypoint.sh" ]
