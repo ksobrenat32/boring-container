@@ -1,0 +1,37 @@
+FROM registry.fedoraproject.org/fedora:36 as build-env
+
+RUN dnf -y --setopt=install_weak_deps=false --nodocs \
+        --installroot /output --releasever 36 \
+        install glibc coreutils-single wol curl openssh-clients iputils bind-utils shadow-utils && \
+    dnf -y --installroot /output --releasever 36 clean all && \
+    rm -rf /output/var/cache/dnf
+
+RUN curl -fsSL -o /tmp/olivetin.tgz $(curl -s https://api.github.com/repos/OliveTin/OliveTin/releases/latest | grep "browser_download_url.*linux-amd64.tar.gz" | cut -d : -f 2,3 | tr -d \") && \
+    tar -xf /tmp/olivetin.tgz --directory=/tmp && \
+    mv /tmp/*-linux-amd64/OliveTin /output/usr/bin/OliveTin && \
+    rm -rf /tmp/*
+
+RUN dnf -y install unzip && \
+    dnf -y clean all && \
+    curl -fsSL -o /tmp/source.zip https://github.com/OliveTin/OliveTin/archive/refs/heads/main.zip && \
+    unzip /tmp/source.zip -d /tmp && \
+    mkdir -p /output/var/www/ && \
+    mv /tmp/OliveTin-main/webui /output/var/www/olivetin && \
+    rm -rf /tmp/*
+
+FROM scratch
+
+LABEL org.opencontainers.image.authors="https://github.com/ksobrenat32" \
+    description="A container image that contains olivetin with WakeOnLan command"
+
+COPY --from=build-env /output /
+
+RUN adduser --home /config --uid 1099 --no-create-home olivetin && \
+    mkdir /config && \
+    chown olivetin: /config
+USER 1099:1099
+
+EXPOSE 1337/tcp
+VOLUME ["/config"]
+
+ENTRYPOINT [ "/usr/bin/OliveTin" ]
