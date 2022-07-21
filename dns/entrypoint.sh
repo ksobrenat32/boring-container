@@ -5,6 +5,7 @@ if [[ -z "$(ls -A /dns)" ]]; then
     echo 'Generating config'
     mkdir -p /dns/{blocky,unbound}
     mv /opt/unbound.conf /dns/unbound/unbound.conf
+    mv /opt/blocky-config.yml /dns/blocky/config.yml
 fi
 
 echo 'Downloading updated root hints ...'
@@ -16,13 +17,6 @@ echo 'Testing unbound config ...'
 /usr/sbin/unbound-checkconf
 echo 'Starting unbound'
 /usr/sbin/unbound
-
-if [[ -z "$(ls -A /dns/blocky)" ]]; then
-    echo 'No blocky configuration detected, downloading mine ...'
-    curl -fsSL -o /dns/blocky/config.yml https://raw.githubusercontent.com/ksobrenat32/notes/main/dns/blocky/config.yml
-else
-    echo 'Detected blocky config.yml'
-fi
 
 echo 'Starting blocky, DNS ad blocker'
 /usr/bin/sudo -u blocky /usr/bin/blocky --config /dns/blocky/config.yml
