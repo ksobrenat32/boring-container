@@ -1,9 +1,10 @@
-FROM registry.fedoraproject.org/fedora:36 as build-env
+FROM docker.io/library/rockylinux:9 as build-env
 
-RUN dnf -y --setopt=install_weak_deps=false --nodocs \
-        --installroot /output --releasever 36 \
+RUN dnf -y install epel-release && \
+    dnf -y --setopt=install_weak_deps=false --nodocs \
+        --installroot /output --releasever 9 \
         install glibc coreutils-single wol curl openssh-clients iputils bind-utils shadow-utils && \
-    dnf -y --installroot /output --releasever 36 clean all && \
+    dnf -y --installroot /output --releasever 9 clean all && \
     rm -rf /output/var/cache/dnf
 
 RUN curl -fsSL -o /tmp/olivetin.tgz $(curl -s https://api.github.com/repos/OliveTin/OliveTin/releases/latest | grep "browser_download_url.*linux-amd64.tar.gz" | cut -d : -f 2,3 | tr -d \") && \

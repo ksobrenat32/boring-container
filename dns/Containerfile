@@ -1,9 +1,9 @@
-FROM registry.fedoraproject.org/fedora:36 as build-env
+FROM docker.io/library/rockylinux:9 as build-env
 
 RUN dnf -y --setopt=install_weak_deps=false --nodocs \
-        --installroot /output --releasever 36 \
+        --installroot /output --releasever 9 \
         install glibc-minimal-langpack coreutils-single glibc bash unbound curl shadow-utils sudo && \
-    dnf -y --installroot /output --releasever 36 clean all
+    dnf -y --installroot /output --releasever 9 clean all
 
 RUN if [ $(arch) = "aarch64" ]; then arch=arm64; elif [ $(arch) = "x86_64" ]; then arch=x86_64 ; fi && \
     curl -fsSL -o /tmp/blocky.tgz $(curl -s https://api.github.com/repos/0xERR0R/blocky/releases/latest | grep "browser_download_url.*_Linux_${arch}.tar.gz" | cut -d : -f 2,3 | tr -d \") && \

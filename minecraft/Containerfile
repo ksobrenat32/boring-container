@@ -1,9 +1,9 @@
-FROM registry.fedoraproject.org/fedora:36 as build-env
+FROM docker.io/library/rockylinux:9 as build-env
 
 RUN dnf -y --setopt=install_weak_deps=false --nodocs \
-        --installroot /output --releasever 36 \
+        --installroot /output --releasever 9 \
         install glibc coreutils-single bash curl jq java-17-openjdk-headless && \
-    dnf -y --installroot /output --releasever 36 clean all
+    dnf -y --installroot /output --releasever 9 clean all
 
 RUN mkdir -p /tmp/mcrcon && \
     curl -fsSL -o /tmp/mcrcon/mcrcon.tar.gz $(curl -s https://api.github.com/repos/Tiiffi/mcrcon/releases/latest | grep "browser_download_url.*64.tar.gz" | cut -d : -f 2,3 | tr -d \") && \

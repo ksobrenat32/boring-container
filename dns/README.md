@@ -10,7 +10,7 @@ By default it uses my configuration for both unbound and blocky,
  To run this container:
 
 ```sh
-podman run -d \
+podman run -d --replace \
     --name udns \
     -p 53:53/tcp `# DNS port` \
     -p 53:53/udp `# DNS port` \
