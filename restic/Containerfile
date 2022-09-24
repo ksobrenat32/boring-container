@@ -1,0 +1,22 @@
+FROM docker.io/library/rockylinux:9 as build-env
+
+RUN dnf -y install epel-release && \
+    dnf -y --setopt=install_weak_deps=false --nodocs \
+        --installroot /output --releasever 9 \
+        install glibc coreutils-single restic openssh-clients && \
+    dnf -y --installroot /output --releasever 9 clean all && \
+    rm -rf /output/var/cache/dnf
+
+FROM scratch
+
+LABEL org.opencontainers.image.authors="https://github.com/ksobrenat32" \
+    description="A container that has restic backup utility"
+
+COPY --from=build-env /output /
+
+ENV RESTIC_REPOSITORY="" \
+    RESTIC_PASSWORD=""
+
+VOLUME ["/data"]
+
+ENTRYPOINT [ "/usr/bin/restic" ]
