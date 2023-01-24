@@ -1,0 +1,40 @@
+FROM docker.io/library/almalinux:9 as build-env
+
+# Construction tools
+RUN dnf -y module enable nodejs:18 && \
+    dnf -y --setopt=install_weak_deps=false --nodocs \
+        install nodejs npm git && \
+    dnf -y clean all && \
+    rm -rf /var/cache/dnf
+
+# Instalation of nodejs on scratch
+RUN dnf -y --setopt=install_weak_deps=false --nodocs \
+        --installroot /output --releasever 9 \
+        install glibc coreutils-single && \
+    dnf -y --setopt=install_weak_deps=false --nodocs \
+        --installroot /output --releasever 9 \
+        module install nodejs:18 && \
+    dnf -y --installroot /output --releasever 9 clean all && \
+    rm -rf /output/var/cache/dnf
+
+# Download and configuration of uptime-kuma
+RUN /usr/bin/git clone -b master --single-branch \
+        https://github.com/louislam/uptime-kuma /output/app && \
+    cd /output/app && \
+    npm install npm -g && \
+    npm run setup && \
+    chmod -R 666 /output/app/data
+
+# Imagen final
+FROM scratch
+
+LABEL org.opencontainers.image.authors="https://github.com/ksobrenat32" \
+    description="Minimal uptime-kuma container"
+
+COPY --from=build-env /output /
+
+VOLUME ["/app/data"]
+EXPOSE 3001
+WORKDIR /app
+
+ENTRYPOINT [ "/usr/bin/node", "./server/server.js" ]
