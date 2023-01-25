@@ -1,0 +1,24 @@
+# Only run when changes are made to main
+on:
+  push:
+    branches:
+      - main
+
+# Main Job
+jobs:
+  BuildAndPush:
+    name: Push images to ghcr.io
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to ghcr.io
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+
+      - name: Build all images and push
+        run: ${PWD}/.github/scripts/build-all.sh ${{ github.actor }}

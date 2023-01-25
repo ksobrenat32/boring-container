@@ -8,5 +8,5 @@ Simple but useful containerfiles and guides, boring because
 
 ```sh
 cd project
-podman build . --tag image-name
+podman build . --tag $(basename "`pwd`")
 ```
