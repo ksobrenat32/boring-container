@@ -1,0 +1,36 @@
+# Name of the image
+env:
+  IMAGE_NAME: udns
+
+# Name of workflow
+name: Image : ${{ env.IMAGE_NAME }}
+
+# Only run when the path is changed
+on:
+  push:
+    path:
+      - ${{ env.IMAGE_NAME }}/**
+
+# Main Job
+jobs:
+  pushGitHubReg:
+    name: Push ${{ env.IMAGE_NAME }} to ghcr.io
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout of directory
+        uses: actions/checkout@v3
+
+      - name: Log in to ghcr.io
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+
+      - name: Build image
+        run: podman build . --tag ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
+        working-directory: ${{ env.IMAGE_NAME }}
+
+      - name: Push image
+        run: podman push ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
+

@@ -1,4 +1,4 @@
-FROM docker.io/library/rockylinux:9 as build-env
+FROM docker.io/library/almalinux:9 as build-env
 
 RUN dnf -y --setopt=install_weak_deps=false --nodocs \
         --installroot /output --releasever 9 \
@@ -14,10 +14,10 @@ RUN mkdir -p /tmp/mcrcon && \
 
 # Copy Geyser config in case it is needed
 RUN mkdir -p /opt/mc/Geyser
-COPY ./minecraft/GeyserConfig.yml /output/opt/mc/Geyser/config.yml
+COPY ./GeyserConfig.yml /output/opt/mc/Geyser/config.yml
 
 # Entrypoint
-COPY ./minecraft/entrypoint.sh /output/entrypoint.sh
+COPY ./entrypoint.sh /output/entrypoint.sh
 RUN chmod +x /output/entrypoint.sh
 
 FROM scratch

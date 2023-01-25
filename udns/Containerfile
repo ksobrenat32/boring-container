@@ -28,10 +28,10 @@ WORKDIR /dns
 
 RUN /usr/sbin/adduser --no-create-home --uid 530 --no-create-home blocky
 
-COPY ./dns/unbound.conf /opt/unbound.conf
-COPY ./dns/blocky-config.yml /opt/blocky-config.yml
+COPY ./unbound.conf /opt/unbound.conf
+COPY ./blocky-config.yml /opt/blocky-config.yml
 
-COPY ./dns/entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]

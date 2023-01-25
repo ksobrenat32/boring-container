@@ -13,8 +13,8 @@ LABEL org.opencontainers.image.authors="https://github.com/ksobrenat32" \
     description="A container image that moves movies and removes the title metadata"
 
 COPY --from=build-env /output /
-COPY ./move_movies/entrypoint.sh /entrypoint.sh
-COPY ./move_movies/manual.sh /manual.sh
+COPY ./entrypoint.sh /entrypoint.sh
+COPY ./manual.sh /manual.sh
 
 VOLUME ["/origin"]
 VOLUME ["/destiny"]

@@ -7,5 +7,6 @@ Simple but useful containerfiles and guides, boring because
 ## Building a local image
 
 ```sh
-podman build -t image-name ./project/.
+cd project
+podman build . --tag image-name
 ```
