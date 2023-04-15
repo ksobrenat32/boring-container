@@ -1,5 +1,7 @@
 # Only run when changes are made to main
 on:
+  schedule:
+    - cron: '0 0 1 * *'
   push:
     branches:
       - main
