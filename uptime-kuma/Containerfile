@@ -1,4 +1,4 @@
-FROM docker.io/library/almalinux:9 as build-env
+FROM docker.io/library/almalinux:8 as build-env
 
 # Construction tools
 RUN dnf -y module enable nodejs:18 && \
@@ -9,12 +9,12 @@ RUN dnf -y module enable nodejs:18 && \
 
 # Instalation of nodejs on scratch
 RUN dnf -y --setopt=install_weak_deps=false --nodocs \
-        --installroot /output --releasever 9 \
+        --installroot /output --releasever 8 \
         install glibc coreutils-single && \
     dnf -y --setopt=install_weak_deps=false --nodocs \
-        --installroot /output --releasever 9 \
+        --installroot /output --releasever 8 \
         module install nodejs:18 && \
-    dnf -y --installroot /output --releasever 9 clean all && \
+    dnf -y --installroot /output --releasever 8 clean all && \
     rm -rf /output/var/cache/dnf
 
 # Download and configuration of uptime-kuma
@@ -23,6 +23,7 @@ RUN /usr/bin/git clone -b master --single-branch \
     cd /output/app && \
     npm install npm -g && \
     npm run setup && \
+    mkdir /output/app/data && \
     chmod -R 666 /output/app/data
 
 # Imagen final
