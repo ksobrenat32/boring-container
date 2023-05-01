@@ -7,11 +7,11 @@ do
     prename 's/ /./g' *
     prename 's/[^[:alnum:].]//g' *
 done
-for file in $(ls --ignore='*.chunk*' --ignore='*.undone.mp4' /origin )
+for file_name in $(ls --ignore='*.chunk*' --ignore='*.undone.mp4' /origin )
 do
-    tmp_name="${file}.undone.mp4"
-    mv "$file" "$tmp_name"
-    ffmpeg -i "$tmp_name" -metadata title='' -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -c:v copy -c:a copy -c:s copy -map 0 "$file"
+    tmp_name="${file_name}.undone.mp4"
+    mv "$file_name" "$tmp_name"
+    ffmpeg -i "'$tmp_name'" -map_metadata -1 -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -c:v copy -c:a copy -c:s copy -map 0 "'$file_name'"
     rm "$tmp_name"
-    mv "$file" /destiny
+    mv "$file_name" /destiny
 done
