@@ -2,10 +2,9 @@
 set -e
 
 # Rename files not ending with chunk
-prename 's/_/./g' !(*.chunk*)
-prename 's/ /./g' !(*.chunk*)
-prename 's/[^[:alnum:].]//g' !(*.chunk*)
-prename 's/[^[:alnum:].]//g' !(*.chunk*)
+find /origin -type f ! -name "*.chunk*" -exec prename -v 's/_/./g' {} +
+find /origin -type f ! -name "*.chunk*" -exec prename -v 's/ /./g' {} +
+find /origin -type f ! -name "*.chunk*" -exec prename -v 's#[^[:alnum:]./]##g' {} +
 
 for file_name in $(ls --ignore='*.chunk*' /origin )
 do
