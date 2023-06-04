@@ -1,9 +1,12 @@
 #! /usr/bin/env bash
 set -e
 
-prename 's/_/./g' *
-prename 's/ /./g' *
-prename 's/[^[:alnum:].]//g' *
+# Rename files not ending with chunk
+prename 's/_/./g' !(*.chunk*)
+prename 's/ /./g' !(*.chunk*)
+prename 's/[^[:alnum:].]//g' !(*.chunk*)
+prename 's/[^[:alnum:].]//g' !(*.chunk*)
+
 for file_name in $(ls --ignore='*.chunk*' /origin )
 do
     tmp_name="${file_name}.undone.mp4"

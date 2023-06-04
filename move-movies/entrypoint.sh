@@ -3,10 +3,10 @@ set -e
 
 while inotifywait -qre close_write /origin
 do
-    sleep 20
-    prename 's/_/./g' *
-    prename 's/ /./g' *
-    prename 's/[^[:alnum:].]//g' *
+    sleep 60
+    prename 's/_/./g' !(*.chunk*)
+    prename 's/ /./g' !(*.chunk*)
+    prename 's/[^[:alnum:].]//g' !(*.chunk*)
 
     for file_name in $(ls --ignore='*.chunk*' /origin )
     do
