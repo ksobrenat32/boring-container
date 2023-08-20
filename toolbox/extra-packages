@@ -32,6 +32,7 @@ net-tools
 nmap
 nss-mdns
 openssh-clients
+openssl
 passwd
 pigz
 procps-ng
