@@ -16,7 +16,7 @@ iperf
 iproute
 iputils
 ImageMagick
-java-17-openjdk
+java-17-openjdk-devel
 whois
 keyutils
 krb5-libs
