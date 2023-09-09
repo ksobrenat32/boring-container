@@ -24,6 +24,7 @@ less
 lsof
 man-db
 man-pages
+mariadb
 mesa-dri-drivers
 mesa-vulkan-drivers
 mtr
@@ -40,6 +41,7 @@ rsync
 shadow-utils
 sudo
 tcpdump
+telnet
 time
 traceroute
 tree
