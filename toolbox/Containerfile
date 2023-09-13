@@ -10,12 +10,12 @@ LABEL com.github.containers.toolbox="true" \
 LABEL org.opencontainers.image.authors="https://github.com/ksobrenat32" \
     description="Custom image for creating Fedora toolbox containers"
 
-RUN rm /etc/rpm/macros.image-language-conf
-RUN sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
+RUN rm /etc/rpm/macros.image-language-conf && \
+    sed -i '/tsflags=nodocs/d' /etc/dnf/dnf.conf
 
-RUN dnf -y upgrade
-RUN dnf -y swap coreutils-single coreutils-full
-RUN dnf -y swap glibc-minimal-langpack glibc-all-langpacks
+RUN dnf -y upgrade && \
+    dnf -y swap coreutils-single coreutils-full && \
+    dnf -y swap glibc-minimal-langpack glibc-all-langpacks
 	
 COPY missing-docs /
 RUN dnf -y reinstall $(<missing-docs)
@@ -24,6 +24,11 @@ RUN rm /missing-docs
 COPY extra-packages /
 RUN dnf -y install $(<extra-packages)
 RUN rm /extra-packages
+
+RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
+    sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo' && \
+    dnf -y check-update && \
+    dnf -y install code
 
 COPY ensure-files /
 RUN ret_val=0; \

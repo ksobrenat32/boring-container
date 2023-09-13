@@ -6,6 +6,7 @@ dnf-plugins-core
 findutils
 flatpak-spawn
 fpaste
+fzf
 g++
 git
 gnupg2
