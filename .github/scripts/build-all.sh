@@ -13,11 +13,11 @@ ACTOR=$1
 banner() {
     msg="# $* #"
     edge=$(echo "$msg" | sed 's/./#/g')
-    echo 
+    echo
     echo "$edge"
     echo "$msg"
     echo "$edge"
-    echo 
+    echo
 }
 
 # Indicate the build actor
@@ -31,11 +31,23 @@ do
     IMAGE_DIR=${IMAGE_DIR%*/}
     cd ${IMAGE_DIR}
 
-    banner "Building Image : ${IMAGE_DIR}"
-    podman build . --tag ghcr.io/${ACTOR}/${IMAGE_DIR}:latest
+    if [ ! -f name ]; then
+        NAME=${IMAGE_DIR}
+    else
+        NAME=$(cat name)
+    fi
 
-    banner "Pushing Image : ${IMAGE_DIR}"
-    podman push ghcr.io/${ACTOR}/${IMAGE_DIR}:latest
+    if [ ! -f version ]; then
+        VERSION="latest"
+    else
+        VERSION=$(cat version)
+    fi
+
+    banner "Building Image : ${NAME}:${VERSION}"
+    podman build . --tag ghcr.io/${ACTOR}/${NAME}:${VERSION}
+
+    banner "Pushing Image : ${NAME}:${VERSION}"
+    podman push ghcr.io/${ACTOR}/${NAME}:${VERSION}
 
     # Return to originalPWD
     cd ${OPWD}
