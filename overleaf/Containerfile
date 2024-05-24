@@ -1,0 +1,12 @@
+FROM docker.io/sharelatex/sharelatex:5.0
+
+# Download compleate and updated texlive
+RUN wget https://mirror.clientvps.com/CTAN/systems/texlive/tlnet/install-tl-unx.tar.gz && \
+	tar -xf install-tl-unx.tar.gz && \
+	rm install-tl-unx.tar.gz && \
+	cd install-tl-* && \
+	perl install-tl --no-interaction
+
+# Make the soft link for textlive
+RUN mv /usr/local/texlive/2023 /usr/local/texlive/2023.backup && \
+	ln -sf /usr/local/texlive/2024 /usr/local/texlive/2023
