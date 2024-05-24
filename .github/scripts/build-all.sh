@@ -29,6 +29,11 @@ for IMAGE_DIR in */
 do
     # Get directory name without trailing /
     IMAGE_DIR=${IMAGE_DIR%*/}
+
+    if [[ ${IMAGE_DIR} == "archived" ]]; then
+        continue
+    fi
+
     cd ${IMAGE_DIR}
 
     if [ ! -f name ]; then
