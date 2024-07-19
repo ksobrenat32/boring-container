@@ -4,10 +4,22 @@ set -e
 CUID=${CUID:-1000}
 ORIGIN=${ORIGIN:-/origin}
 DESTINY=${DESTINY:-/destiny}
+MD5_HASH=$(ls -laR ${ORIGIN} | md5sum | awk ' { print $1 }')
 
-while inotifywait -qre close_write ${ORIGIN}
+echo "Starting move-movies with CUID=${CUID}, ORIGIN=${ORIGIN} and DESTINY=${DESTINY}"
+
+while true
 do
-    sleep 10
+    NEW_MD5_HASH=$(ls -laR ${ORIGIN} | md5sum | awk ' { print $1 }')
+    if [ "${MD5_HASH}" != "${NEW_MD5_HASH}" ]; then
+        MD5_HASH=${NEW_MD5_HASH}
+        echo "Directory changes detected, trying conversion"
+    else
+        sleep 10
+        continue
+    fi
+
+    sleep 5
     # Rename _ to .
     find ${ORIGIN} -type f ! -name "*.chunk*" -exec prename -v 's/_/./g' {} +
     # Rename spaces to .

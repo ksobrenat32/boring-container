@@ -7,7 +7,7 @@ ARG FEDORA_VERSION
 RUN dnf -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm && \
     dnf -y --setopt=install_weak_deps=false --nodocs \
         --installroot /output --releasever ${FEDORA_VERSION} \
-        install glibc coreutils-single prename ffmpeg inotify-tools findutils && \
+        install glibc coreutils-single prename ffmpeg findutils gawk && \
     dnf -y --installroot /output --releasever ${FEDORA_VERSION} clean all && \
     rm -rf /output/var/cache/dnf
 
