@@ -1,10 +1,14 @@
-FROM registry.fedoraproject.org/fedora:38 as build-env
+ARG FEDORA_VERSION=40
+
+FROM registry.fedoraproject.org/fedora:${FEDORA_VERSION} as build-env
+
+ARG FEDORA_VERSION
 
 RUN dnf -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm && \
     dnf -y --setopt=install_weak_deps=false --nodocs \
-        --installroot /output --releasever 38 \
+        --installroot /output --releasever ${FEDORA_VERSION} \
         install glibc coreutils-single prename ffmpeg inotify-tools findutils && \
-    dnf -y --installroot /output --releasever 38 clean all && \
+    dnf -y --installroot /output --releasever ${FEDORA_VERSION} clean all && \
     rm -rf /output/var/cache/dnf
 
 FROM scratch
