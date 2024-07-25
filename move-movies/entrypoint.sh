@@ -35,6 +35,8 @@ do
     find ${ORIGIN} -type f ! -name "*.chunk*" -exec prename -v 's/Í/I/g' {} +
     find ${ORIGIN} -type f ! -name "*.chunk*" -exec prename -v 's/Ó/O/g' {} +
     find ${ORIGIN} -type f ! -name "*.chunk*" -exec prename -v 's/Ú/U/g' {} +
+    find ${ORIGIN} -type f ! -name "*.chunk*" -exec prename -v 's/ñ/n/g' {} +
+    find ${ORIGIN} -type f ! -name "*.chunk*" -exec prename -v 's/Ñ/N/g' {} +
     # Remove other special characters
     find ${ORIGIN} -type f ! -name "*.chunk*" -exec prename -v 's#[^[:alnum:]./]##g' {} +
 
