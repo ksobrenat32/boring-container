@@ -49,10 +49,10 @@ do
     fi
 
     banner "Building Image : ${NAME}:${VERSION}"
-    podman build . --tag ghcr.io/${ACTOR}/${NAME}:${VERSION}
+    docker buildx build -f Containerfile --tag ghcr.io/${ACTOR}/${NAME}:${VERSION} .
 
     banner "Pushing Image : ${NAME}:${VERSION}"
-    podman push ghcr.io/${ACTOR}/${NAME}:${VERSION}
+    docker push ghcr.io/${ACTOR}/${NAME}:${VERSION}
 
     # Return to originalPWD
     cd ${OPWD}

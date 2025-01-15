@@ -1,0 +1,4 @@
+FROM docker.io/sharelatex/sharelatex:5.3.0
+
+# Download complete and updated texlive
+RUN tlmgr install scheme-full
