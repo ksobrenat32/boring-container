@@ -8,6 +8,9 @@ OPWD=$(pwd)
 # Get actor of image from argument
 ACTOR=$1
 
+# Get the hash from argument
+SHA=$2
+
 # Function for banner on workflow logs
 
 banner() {
@@ -42,17 +45,20 @@ do
         NAME=$(cat name)
     fi
 
-    if [ ! -f version ]; then
-        VERSION="latest"
-    else
-        VERSION=$(cat version)
+    banner "Building Image : ${NAME} with SHA : ${SHA}"
+    docker buildx build -f Containerfile --tag ghcr.io/${ACTOR}/${NAME}:latest .
+
+    # Push latest tag and sha tag
+    docker push ghcr.io/${ACTOR}/${NAME}:latest
+
+    docker tag ghcr.io/${ACTOR}/${NAME}:latest ghcr.io/${ACTOR}/${NAME}:${SHA}
+    docker push ghcr.io/${ACTOR}/${NAME}:${SHA}
+
+    # If version file exists, tag and push the image with version
+    if [ -f version ]; then
+        docker tag ghcr.io/${ACTOR}/${NAME}:${SHA} ghcr.io/${ACTOR}/${NAME}:$(cat version)
+        docker push ghcr.io/${ACTOR}/${NAME}:$(cat version)
     fi
-
-    banner "Building Image : ${NAME}:${VERSION}"
-    docker buildx build -f Containerfile --tag ghcr.io/${ACTOR}/${NAME}:${VERSION} .
-
-    banner "Pushing Image : ${NAME}:${VERSION}"
-    docker push ghcr.io/${ACTOR}/${NAME}:${VERSION}
 
     # Return to originalPWD
     cd ${OPWD}

@@ -35,4 +35,4 @@ jobs:
           registry: ghcr.io
 
       - name: Build all images and push
-        run: ${PWD}/.github/scripts/build-all.sh ${{ github.actor }}
+        run: ${PWD}/.github/scripts/build-all.sh ${{ github.actor }} ${{ github.sha }}
