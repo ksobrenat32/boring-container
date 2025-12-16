@@ -31,7 +31,7 @@ function move-movies(){
     if [[ ${FILE_NAME} == *.mkv ]]; then
         if [[ ${HWACCEL} == "vaapi" ]]; then
             # Use VAAPI for hardware acceleration (Intel/AMD on Linux)
-            ffmpeg -vaapi_device /dev/dri/renderD128 -i "${FILE_NAME}" \
+            ffmpeg -sub_charenc ISO-8859-1 -vaapi_device /dev/dri/renderD128 -i "${FILE_NAME}" \
                 -hide_banner -loglevel error \
                 -map 0:v -map 0:a -map 0:s? \
                 -map_metadata 0 \
@@ -43,7 +43,7 @@ function move-movies(){
                 "${OUT_FILE}"
         else
             # Use software encoding with libx264
-            ffmpeg -i "${FILE_NAME}" \
+            ffmpeg -sub_charenc ISO-8859-1 -i "${FILE_NAME}" \
                 -hide_banner -loglevel error \
                 -map 0:v -map 0:a -map 0:s? \
                 -map_metadata 0 \
