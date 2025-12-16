@@ -4,6 +4,7 @@ set -e
 CUID=${CUID:-1000}
 ORIGIN=${ORIGIN:-/origin}
 DESTINY=${DESTINY:-/destiny}
+HWACCEL=${HWACCEL:-none}
 
 function move-movies(){
     FILE_NAME=$1
@@ -28,15 +29,30 @@ function move-movies(){
 
     # If file is an mkv, convert to mp4
     if [[ ${FILE_NAME} == *.mkv ]]; then
-        ffmpeg -i "${FILE_NAME}" \
-            -hide_banner -loglevel error \
-            -map 0:v -map 0:a -map 0:s? \
-            -map_metadata 0 \
-            -metadata title= \
-            -c:v libx264 \
-            -c:a aac \
-            -c:s mov_text \
-            "${OUT_FILE}"
+        if [[ ${HWACCEL} == "vaapi" ]]; then
+            # Use VAAPI for hardware acceleration (Intel/AMD on Linux)
+            ffmpeg -vaapi_device /dev/dri/renderD128 -i "${FILE_NAME}" \
+                -hide_banner -loglevel error \
+                -map 0:v -map 0:a -map 0:s? \
+                -map_metadata 0 \
+                -metadata title= \
+                -vf 'format=nv12,hwupload' \
+                -c:v h264_vaapi \
+                -c:a aac \
+                -c:s mov_text \
+                "${OUT_FILE}"
+        else
+            # Use software encoding with libx264
+            ffmpeg -i "${FILE_NAME}" \
+                -hide_banner -loglevel error \
+                -map 0:v -map 0:a -map 0:s? \
+                -map_metadata 0 \
+                -metadata title= \
+                -c:v libx264 \
+                -c:a aac \
+                -c:s mov_text \
+                "${OUT_FILE}"
+        fi
     fi
 
     chown ${CUID}:${CUID} "${OUT_FILE}"
