@@ -53,7 +53,8 @@ do
             ffmpeg -i "${FILE_NAME}" \
                 -hide_banner -loglevel error \
                 -fflags +bitexact \
-                -map 0 \
+                -map 0:v -map 0:a -map 0:s? \
+                -map_metadata 0 \
                 -metadata title= \
                 -c:v copy -flags:v +bitexact \
                 -c:a copy -flags:a +bitexact \
@@ -65,7 +66,8 @@ do
         if [[ ${FILE_NAME} == *.mkv ]]; then
             ffmpeg -i "${FILE_NAME}" \
                 -hide_banner -loglevel error \
-                -map 0 \
+                -map 0:v -map 0:a -map 0:s? \
+                -map_metadata 0 \
                 -metadata title= \
                 -c:v libx264 \
                 -c:a aac \
